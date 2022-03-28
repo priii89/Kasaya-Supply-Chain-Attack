@@ -37,4 +37,5 @@ In the next section we will focus on the high-level steps of the exploit and des
 
 The threat actor first sent a POST request to the resource /dl.asp with the POST data userAgentGuid=guid.
 
+![](images/1.png)
 
