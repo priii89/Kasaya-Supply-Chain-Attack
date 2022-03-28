@@ -26,8 +26,15 @@ The vulnerability was used to send a malicious script to all computers managed b
 
             
 ## How the Kaseya VSA Zero-Day Exploit Worked
-The pre-auth remote code execution exploit against Kaseya VSA Server that was exploited in the widespread Revil ransomware attack on July 2, 2021 is described as follows. Following the validation of the patch and confirmation that the attack vector is no longer active. The exploit took advantage of four vulnerabilities in the Kaseya programme, which were chained together as shown in the figure 2 below:
+The pre-auth remote code execution exploit against Kaseya VSA Server that was exploited in the widespread Revil ransomware attack on July 2, 2021 is described as follows. Following the validation of the patch and confirmation that the attack vector is no longer active. The exploit took advantage of four vulnerabilities in the Kaseya programme, which were chained together as shown in the figure below:
 
 
+![](images/image2-edited.jpg)
+
+In the next section we will focus on the high-level steps of the exploit and describe steps 1 through 4 in detail:
+
+### Step 1 – Bypassing Authentication [CWE-304]
+
+The threat actor first sent a POST request to the resource /dl.asp with the POST data userAgentGuid=guid.
 
 
