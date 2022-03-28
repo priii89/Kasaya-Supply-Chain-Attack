@@ -39,3 +39,9 @@ The threat actor first sent a POST request to the resource /dl.asp with the POST
 
 ![](images/1.png)
 
+userAgentGuid is used in a SELECT query in dl.asp to look up the agent's database row. Because of the if statement that follows, the agentGuid must exist. The threat actor used the agentGuid of the VSA server's own agent.
+Following the lookup, dl.asp checks to determine if the provided password matches the database information for that agent. After then, the submitted password is compared in a variety of ways. The following pseudo code depicts the login flow:
+
+
+
+
