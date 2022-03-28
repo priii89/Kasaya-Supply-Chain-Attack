@@ -8,12 +8,13 @@ Kaseya clients from large enterprises to small companies across 17 countries had
 This sophisticated attack was developed by REvil, one of the most powerful ransomware-as-a-service (RaaS) that develops ransomware payloads and provides the victims with decryption tools after getting paid. For revealing a universal decryption key, The REvil claimed to demand $70 million dollars and guaranteed that all victimized companies would be able to recover their files.
 https://www.techrepublic.com/article/kaseya-supply-chain-attack-impacts-more-than-1000-companies/
 Since Managed Service providers(MSPs) are usually less mature businesses they have weak unsecured programs. These companies, by leveraging Kaseya’s software, make it an irresistible and easy to exploit target in extortionists’ eyes.
+Here is a brief discription to VSA and MSP :
 
 #### Kaseya Virtual System Administrator (VSA)
 Kaseya VSA is a remote monitoring and management (RMM) software that helps MSPs increase profitability. Moreover, it helps IT departments to get the most out of what they do. It boosts up IT teams by getting rid of inefficiency with an all-in-one endpoint management so they can progress even more than before. Managed Service Providers (MSPs) benefit from this program to remotely control and administer IT services demanded by customers. 
 https://www.kaseya.com/products/vsa/
 
-#### MSP = managed service provider (MSP)
+#### Managed Service Provider (MSP)
 MSP is a third-party company that remotely manages a customer's information technology (IT) infrastructure and end-user systems. MSP’s services may include network and infrastructure management, security and monitoring.
 
 ## Attack Overview
@@ -60,12 +61,12 @@ The threat actor initiated the upload by making an empty GET request to /done.as
 
 The threat actor used a multiform-data POST request to the resource /cgi-bin/KUpload.dll to upload files. The following parameters were included in the request:
 
-●	FileName (name of the file)
-●	FileData (content of the file to upload)
-●	LoadKey (the value obtained by GETting done.asp)
-●	RedirectPath (path that the application will redirect to after successful upload)
-●	PathData (folder the file will be saved in)
-●	_RequestValidationToken (bypassable CSRF token)
+*	FileName (name of the file)
+*	FileData (content of the file to upload)
+*	LoadKey (the value obtained by GETting done.asp)
+*	RedirectPath (path that the application will redirect to after successful upload)
+*	PathData (folder the file will be saved in)
+*	_RequestValidationToken (bypassable CSRF token)
 
 #### Uploading the Ransomware (Agent.crt)
 The threat actor uploaded a file called agent.crt as the first file. This file included an encoded version of the ransomware, which was eventually distributed to all agents via the compromised VSA server.
@@ -79,7 +80,41 @@ Screenshot.jpg uploaded by the threat actor. This, however, was not an actual jp
 
 ![](images/6.png)
             
+ /done.asp? was the response body link in this case.
             
+### Step 4 – Executing the Payload on the Server [CWE-94]
+Finally, the threat actor used the pageFilterSQLFile parameter in a POST request to /userFilterTableRpt.asp.
+
+![](images/7.png) 
+            
+The contents of the provided file would be treated as ASP code when it was passed to the function eval due to a bug in userFilterTableRpt.asp. The ASP code text file the threat actor just uploaded is ManagedFiles/VSATicketFiles/Screenshot.jpg in this case.
+The first thing userFilterTableRpt.asp does is create a variable from the POST parameter. The contents of the specified file are then read and passed to eval, which will interpret the value of the argument as code by definition. The following pseudo code depicts the flow:
+f = open (pageFilterSQLFile) 
+c = read (f) 
+eval (c)
+
+That is all there is to it. The ransomware was distributed when the ASP payload was executed.
+            
+### The actions took by Kasaya to tackle the issue?
+*	Although the company had not received any vulnerability report from SaaS or customers, it immediately shut down the SaaS servers as a precaution measure.
+            
+*	It also sent out emails and made phone calls to alert  its on-premises clients and advising them to take down their VSA servers.
+            
+Kaseya and other parties immediately advised to the affected customers:
+1.	To avoid future compromise, firms with on-premises VSA servers should first shut them down.
+2.	Second, organizations are able to download and run a Penetration Testing Tool, which scans a VSA server or managed endpoint for signs of compromise (IoC). This tool's latest version additionally checks for data encryption and the REvil ransom note. As such, even firms who have previously run the product should run the new version.
+3.	Third, CISA and the FBI suggested affected MSPs to implement and a multi-factor authentication (MFA) on all their accounts, restrict their communication with remote monitoring and management (RMM) and set up RMM administrative interfaces behind a VPN or a firewall.
+4.	Fourth, organisations need to make sure to update backups and store them in an apprachable, air-gapped location isolated from the main network, implement a manual patch management process that goes after vendor guidance and instals new patches as soon as they become available, and apply the basis of least privilege access to main network administrator accounts.
+
+            
+            
+
+            
+
+            
+            
+            
+           
             
             
             
