@@ -42,6 +42,48 @@ The threat actor first sent a POST request to the resource /dl.asp with the POST
 userAgentGuid is used in a SELECT query in dl.asp to look up the agent's database row. Because of the if statement that follows, the agentGuid must exist. The threat actor used the agentGuid of the VSA server's own agent.
 Following the lookup, dl.asp checks to determine if the provided password matches the database information for that agent. After then, the submitted password is compared in a variety of ways. The following pseudo code depicts the login flow:
 
+![](images/2.png)
+
+Logging in will fail if the password is the same as [password]. If all of the checks fail, the else clause is invoked, setting "loginOK" to true.
+The "password" variable would be NULL because no password was provided in the request, and loginOK would be true. When loginOK is set to true, the application transmits the login session cookie and eventually ends up in an if clause that provides a 302 redirect to the userPortal (if no other parameters are provided, like in the attacker's request).
+
+![](images/3.png)
+
+#### How Did the Actor Obtain the AgentGuid?
+There is no evidence that shows exactly how these agentGuids were obtained. It appears they simply knew the agentGuids before launching the attack.
+<vsa_server_hostname>.root.kserver might have been used as the userAgentGuid parameter instead of an actual agentGuid. If agentGuid is not a number, it will look up the agentGuid from the table machNameTab automatically.
+
+### Steps 2 and 3 – Uploading Files [CWE-434][CWE-352]
+The threat actor initiated the upload by making an empty GET request to /done.asp. When the programme receives the request, it generates a row in the tempData table, sets up an upload folder, and then returns a loadKey value. To upload the file, you'll need a valid loadkey.
+
+![](images/4.png)
+
+The threat actor used a multiform-data POST request to the resource /cgi-bin/KUpload.dll to upload files. The following parameters were included in the request:
+
+●	FileName (name of the file)
+●	FileData (content of the file to upload)
+●	LoadKey (the value obtained by GETting done.asp)
+●	RedirectPath (path that the application will redirect to after successful upload)
+●	PathData (folder the file will be saved in)
+●	_RequestValidationToken (bypassable CSRF token)
+
+#### Uploading the Ransomware (Agent.crt)
+The threat actor uploaded a file called agent.crt as the first file. This file included an encoded version of the ransomware, which was eventually distributed to all agents via the compromised VSA server.
+
+![](images/5.png)
+
+Upon successful upload, the server returns HTTP 200 OK with a body containing a link pointing to /<redirectPath>?FileName=<filename>&PathData=<relative path>&originalName=<filename>&FileSize=<size>&TimeElapsed=<time>.
+            
+#### Uploading the ASP Payload (Screenshot.jpg)
+Screenshot.jpg uploaded by the threat actor. This, however, was not an actual jpeg picture, but rather a text file containing ASP code. Another loadKey value was obtained from /done.asp. After that, the threat actor uploaded the file. The request’s contents can be seen in the figure below. 
+
+![](images/6.png)
+            
+            
+            
+            
+            
+            
 
 
 
