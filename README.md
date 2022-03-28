@@ -21,6 +21,13 @@ This attack impacted Kaseya customers who used the on-premise VSA server. The VS
 Furthermore, if the VSA server is connected to the internet, any vulnerability could be exploited to gain access to the server. 
 A zero-day vulnerability in the VSA server was discovered and exploited by the threat actor, an affiliate of the REvil ransomware-as-a-service. A zero-day vulnerability is a defect in software or a network that hasn't been fixed or for which there isn't a patch. The vendor of the programme or device may or may not be aware of the problem. When a defect is publicly disclosed, it increases the danger of cyberattacks against businesses that use the software or device. 
 The vulnerability was used to send a malicious script to all computers managed by the server, therefore reaching all of the end users. The script infected computers with the REvil malware and encrypted them.
+![Overview of the attack](images/image1-edited.jpg)
+
+
+            
+## How the Kaseya VSA Zero-Day Exploit Worked
+The pre-auth remote code execution exploit against Kaseya VSA Server that was exploited in the widespread Revil ransomware attack on July 2, 2021 is described as follows. Following the validation of the patch and confirmation that the attack vector is no longer active. The exploit took advantage of four vulnerabilities in the Kaseya programme, which were chained together as shown in the figure 2 below:
+
 
 
 
